@@ -717,11 +717,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ravan\\source\\repos\\HangFire-PoC\\HangFire-PoC\\HangFire-PoC.csproj",
+      "projectUniqueName": "C:\\Users\\ravan\\Documents\\Learnings\\Dot Net Core\\Code\\HangFire-PoC\\HangFire-PoC\\HangFire-PoC.csproj",
       "projectName": "HangFire-PoC",
-      "projectPath": "C:\\Users\\ravan\\source\\repos\\HangFire-PoC\\HangFire-PoC\\HangFire-PoC.csproj",
+      "projectPath": "C:\\Users\\ravan\\Documents\\Learnings\\Dot Net Core\\Code\\HangFire-PoC\\HangFire-PoC\\HangFire-PoC.csproj",
       "packagesPath": "C:\\Users\\ravan\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ravan\\source\\repos\\HangFire-PoC\\HangFire-PoC\\obj\\",
+      "outputPath": "C:\\Users\\ravan\\Documents\\Learnings\\Dot Net Core\\Code\\HangFire-PoC\\HangFire-PoC\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Microsoft\\Xamarin\\NuGet\\",
