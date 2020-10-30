@@ -12,18 +12,13 @@ namespace HangFire_PoC.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController()
         {
-            _logger = logger;
+
         }
 
         public IActionResult Index()
         {
-            RecurringJob.AddOrUpdate(() => Debug.WriteLine("Recurring"), Cron.Minutely());
-            RecurringJob.AddOrUpdate(() => CallJobMethod(), Cron.Minutely());
-
             return View();
         }
 

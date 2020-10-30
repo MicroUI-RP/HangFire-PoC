@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Hangfire;
 using Hangfire.SqlServer;
+using HangFire_PoC.Models;
 
 namespace HangFire_PoC
 {
@@ -32,7 +33,7 @@ namespace HangFire_PoC
                                                   .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                                                   .UseSimpleAssemblyNameTypeSerializer()
                                                   .UseRecommendedSerializerSettings()
-                                                  .UseSqlServerStorage(Configuration.GetConnectionString("HangFirePoCCOnnectionString"), 
+                                                  .UseSqlServerStorage(Configuration.GetConnectionString("HangFirePoCCOnnectionString"),
                                                                        new SqlServerStorageOptions
                                                                        {
                                                                            CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
@@ -43,13 +44,27 @@ namespace HangFire_PoC
                                                                        }));
 
             // Add the processing server as IHostedService
-            services.AddHangfireServer();
+            services.AddHangfireServer(options =>
+            {
+                options.WorkerCount = Environment.ProcessorCount * 5;
+                /*queue are used for priortising jobs. 
+                When using SQL as backend - alphanumeric order is maintained and not array index*/
+                options.Queues = new[] { "alpha", "beta", "default" };
+                options.HeartbeatInterval = new System.TimeSpan(0, 1, 0);
+                options.ServerCheckInterval = new System.TimeSpan(0, 1, 0);
+                options.SchedulePollingInterval = new System.TimeSpan(0, 1, 0);
+
+            });
+
+            services.AddSingleton<IPrintJob, PrintJob>();
         }
 
-
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app,
+                              IWebHostEnvironment env,
+                              IBackgroundJobClient backgroundJobs,
+                              IRecurringJobManager recurringJobs,
+                              IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -68,13 +83,48 @@ namespace HangFire_PoC
 
             app.UseAuthorization();
 
-            app.UseHangfireDashboard();
+            //The following line is also optional, if you required to monitor your jobs.
+            //Make sure you're adding required authentication 
+
+            app.UseHangfireDashboard("/mydashboard", options: new DashboardOptions
+            {
+
+                DashboardTitle = "Azure Governance Portal",
+                DisplayStorageConnectionString = false,
+
+            });
+
+            backgroundJobs.Enqueue(() => Console.WriteLine("Hello world from Hangfire!"));
+            //RecurringJob.RemoveIfExists("aefc3420-0078-441d-b58b-5d9ca38d55b0");
+            RecurringJob.AddOrUpdate("aefc3420-0078-441d-b58b-5d9ca38d55b0",
+                                     ()=>Console.WriteLine("This is a recuurring job"), 
+                                     "*/1 * * * *" );
+
+            RecurringJob.RemoveIfExists("b045ef80-bbe8-4e3e-ae66-e96bbbe38c18");
+
+            // RecurringJob.AddOrUpdate<IPrintJob>(
+            //     "b045ef80-bbe8-4e3e-ae66-e96bbbe38c18",
+            //     x => x.Print(),
+            //     "*/1 * * * *",null,"alpha"
+            //     );
+
+            recurringJobs.RemoveIfExists("Run every min");
+
+            recurringJobs.AddOrUpdate("Run every min",
+                                      () => serviceProvider.GetRequiredService<IPrintJob>().Print(),
+                                      "*/1 * * * *", null, "alpha");
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapHangfireDashboard("/mydashboard", new DashboardOptions()
+                {
+                    //Authorization = new List<IDashboardAuthorizationFilter>{}
+                });
+                //.RequireAuthorization(HangfirePolicyName);
             });
         }
     }
