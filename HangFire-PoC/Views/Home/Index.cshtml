@@ -5,14 +5,18 @@
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script>
     $(document).ready(function () {
+        loadHangFireData();
+    });
+
+    function loadHangFireData() {
         $.ajax({
-            url:"https://localhost:44352/HangFireMicroUI/GetJobs",
+            url: "https://localhost:44352/HangFireMicroUI/GetJobs",
             type: "GET",
             success: function (response) {
                 $('#hangFireData').html(response);
             }
         });
-    });
+    }
 </script>
 
 <div class="text-center">
