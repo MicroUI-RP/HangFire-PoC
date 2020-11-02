@@ -5,10 +5,4 @@
     <RootNamespace>HangFire_PoC</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.17" />
-    <PackageReference Include="Hangfire.Core" Version="1.7.17" />
-    <PackageReference Include="Hangfire.SqlServer" Version="1.7.17" />
-  </ItemGroup>
-
 </Project>

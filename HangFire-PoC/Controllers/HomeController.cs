@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using HangFire_PoC.Models;
-using Hangfire;
 
 namespace HangFire_PoC.Controllers
 {
@@ -20,6 +19,11 @@ namespace HangFire_PoC.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult GetDashboard()
+        {
+            return RedirectPermanent("https://localhost:44352/myDashboard");
         }
 
         public IActionResult Privacy()
